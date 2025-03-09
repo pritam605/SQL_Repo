@@ -45,3 +45,33 @@ SELECT
 AS Final_Account_Balance
 FROM TRANSACTIONS
 GROUP BY 1;
+
+-- Q5. Average Transaction Amount per User
+-- Write a SQL query to compute the average transaction amount for each user and rank the users in descending order based on their average transaction amount.
+
+--Input Table:
+-- transactions table:
+ -- transaction_id (integer)
+ -- user_id (integer)
+ -- transaction_date (date)
+ -- amount (decimal)
+
+-- Self Attempt
+SELECT
+  user_id,
+  avg(amount) over (order by user_id) as ord
+FROM transactions
+group by user_id;
+
+--Solution found on internet - 
+WITH avg_trans AS (
+ SELECT user_id, 
+ ROUND(AVG(amount), 2) AS avg_trans_amt 
+ FROM transactions2
+ GROUP BY user_id
+)
+SELECT user_id, 
+ avg_trans_amt, 
+ DENSE_RANK() OVER(ORDER BY avg_trans_amt DESC) AS rnk 
+FROM avg_trans
+ORDER BY rnk;
