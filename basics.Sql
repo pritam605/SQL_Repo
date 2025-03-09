@@ -27,5 +27,5 @@ SELECT
   (SUM(REVENUE) - LAG(SUM(REVENUE)) OVER (ORDER BY account_id)) AS LAGGED_REVENUE -- No need to partition by account_id because it is already partitioned.
 FROM
   REVENUE
-WHERE TRANSACTION_DATE >= DATEADD('Month',12,CURRENT_DATE)
+WHERE TRANSACTION_DATE >= DATEADD(MONTH,12,CURRENT_DATE)
 group by 1;
