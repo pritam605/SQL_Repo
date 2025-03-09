@@ -18,3 +18,14 @@ LEFT JOIN CUSTOMER_DETAILS c
 ON r.account_id = c.account_id
 WHERE transaction_date >= DATEDADD(MONTH,12, CURRENT_DATE)
 GROUP BY 1 ORDER BY 2 DESC LIMIT 5;
+
+
+--Q3. Calculate MoM values for revenue for each Client.
+SELECT 
+  account_id, 
+  SUM(REVENUE) AS TOTAL_REVENUE,
+  (SUM(REVENUE) - LAG(SUM(REVENUE)) OVER (ORDER BY account_id)) AS LAGGED_REVENUE -- No need to partition by account_id because it is already partitioned.
+FROM
+  REVENUE
+WHERE TRANSACTION_DATE >= DATEADD('Month',12,CURRENT_DATE)
+group by 1;
