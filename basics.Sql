@@ -167,10 +167,11 @@ Since all transactions generate the same key, COUNT(DISTINCT "1-2") only counts 
 '''
 
 
-Question 4: Determining High-Value Customers
-Write a SQL query to identify users who, in the last month, have either sent payments over 1000 or received payments over 5000, excluding those flagged as fraudulent.
+-- Q 7: Determining High-Value Customers (**)
+-- Write a SQL query to identify users who, in the last month, have either sent payments over 1000 or received payments over 5000, excluding those flagged as fraudulent.
 
-Input Tables:
+-- Input Tables:
+'''
 • transactions table:
  - transaction_id (integer)
  - user_id (integer)
@@ -182,10 +183,45 @@ Input Tables:
  - user_id (integer)
  - username (text)
  - is_fraudulent (boolean)
+'''
 
-Question 5: Analyzing User Transaction Data
-Write a SQL query that calculates the total and average transaction amount for each user, including only those users who have made at least two transactions.
+-- Self Attempt
+SELECT
+  CASE
+    WHEN (transaction_type = 'Sent' and payments > 1000) OR (transaction_type = 'Received' and payments > 5000) THEN account_id ELSE NULL) 
+  END as users
+FROM
+(
+  SELECT DISTINCT
+    t1.user_id, user_name, transaction_type, sum(amount) as payments
+  FROM TRANSACTIONS t
+  LEFT JOIN 
+    users_table u 
+  ON t1.user_id = u.user_id
+  WHERE 
+    transaction_date > DATEDADD(MONTH,-1,CURRENT_DATE) AND is_fraudulent = 'False'
+  GROUP BY 1,2,3
+)
 
+-- Correct Solution 
+SELECT DISTINCT u.user_id, u.username
+FROM (
+    SELECT t.user_id,
+           SUM(CASE WHEN t.transaction_type = 'Sent' THEN t.amount ELSE 0 END) AS sent_payments,
+           SUM(CASE WHEN t.transaction_type = 'Received' THEN t.amount ELSE 0 END) AS received_payments
+    FROM transactions t
+    WHERE t.transaction_date >= DATEADD(MONTH, -1, CURRENT_DATE)
+    GROUP BY t.user_id
+) payment_summary
+JOIN users u ON payment_summary.user_id = u.user_id
+WHERE (sent_payments > 1000 OR received_payments > 5000)
+AND u.is_fraudulent = FALSE;
+
+
+
+-- Q 8.: Analyzing User Transaction Data
+--Write a SQL query that calculates the total and average transaction amount for each user, including only those users who have made at least two transactions.
+'''
 Input Tables:
 • Users table:
  - user_id (integer)
@@ -196,34 +232,31 @@ Input Tables:
  - user_id (integer)
  - transaction_date (date)
  - transaction_amount (decimal)
+'''
 
+-- Self Attempt
+select user_id,
+  sum(transaction_amount),
+  avg(transaction_amount)
+FROM TRANSACTIONS
+WHERE user_id IN
+(
+SELECT DISTINCT user_id
+FROM transactions
+qualify row_number() over (partition by user_id order by transaction_id) as rn >= 2
+)
 
+--Solution
+SELECT 
+    t.user_id,
+    SUM(t.transaction_amount) AS total_transaction_amount,
+    AVG(t.transaction_amount) AS avg_transaction_amount
+FROM transactions t
+WHERE t.user_id IN (
+    SELECT user_id
+    FROM transactions
+    GROUP BY user_id
+    HAVING COUNT(*) >= 2  -- Ensures at least 2 transactions per user
+)
+GROUP BY t.user_id;
 
--- As per solutions found on Internet
-3) SELECT COUNT(*) AS unique_relationships
-FROM (
- SELECT LEAST(payer_id, recipient_id) AS user1,
- GREATEST(payer_id, recipient_id) AS user2
- FROM payments3
- WHERE (payer_id, recipient_id) IN (
- SELECT recipient_id, payer_id FROM payments3
- )
- GROUP BY LEAST(payer_id, recipient_id), GREATEST(payer_id, recipient_id)
-) AS unique_pairs;
-
-4) SELECT a.user_id, b.username, a.transaction_date, a.transaction_type, a.amount
-FROM transactions a
-INNER JOIN users b ON a.user_id = b.user_id
-WHERE b.is_fraudulent = 0
-AND a.transaction_date >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
-AND (
- (a.transaction_type = 'send' AND a.amount > 1000) 
- OR 
- (a.transaction_type = 'receive' AND a.amount > 5000)
-);
-
-5) SELECT user_id, 
- SUM(transaction_amount) AS total_amount, 
- AVG(transaction_amount) AS average_amount 
-FROM transactions4
-GROUP BY user_id
