@@ -1,5 +1,4 @@
 -- Q1. Find total revenue for last 12 months of client. Date may contain values across years.
-
 SELECT 
   SUM(REVENUE) AS TOTAL_REVENUE
 FROM
