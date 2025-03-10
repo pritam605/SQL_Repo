@@ -1,0 +1,92 @@
+-- Can you differentiate between INNER JOIN and OUTER JOIN in SQL
+Yes! **INNER JOIN** and **OUTER JOIN** are two types of joins in SQL that determine how data is combined from multiple tables. Here's a detailed differentiation:
+
+---
+
+## **1. INNER JOIN**
+- **Definition**: Returns only the **matching records** from both tables based on the specified condition.
+- **How it works**: If there is no match between the tables, the rows are **excluded**.
+- **Use case**: When you want to retrieve only the related data from both tables.
+
+### **Example**  
+Let's say we have two tables:
+
+#### **Customers Table**
+| customer_id | name  |
+|------------|--------|
+| 1          | Alice  |
+| 2          | Bob    |
+| 3          | Charlie |
+
+#### **Orders Table**
+| order_id | customer_id | order_amount |
+|----------|------------|--------------|
+| 101      | 1          | 500          |
+| 102      | 2          | 700          |
+
+**INNER JOIN Query:**
+```sql
+SELECT c.customer_id, c.name, o.order_id, o.order_amount
+FROM Customers c
+INNER JOIN Orders o
+ON c.customer_id = o.customer_id;
+```
+
+**Result:**
+| customer_id | name  | order_id | order_amount |
+|------------|--------|----------|--------------|
+| 1          | Alice  | 101      | 500          |
+| 2          | Bob    | 102      | 700          |
+
+- **Charlie is missing** because he has no matching order.
+
+---
+
+## **2. OUTER JOIN**
+- **Definition**: Returns **all records** from one or both tables, even if there is no match.
+- **Types**:
+  1. **LEFT JOIN (LEFT OUTER JOIN)** – Returns **all records from the left table** and matching records from the right table. If no match, it fills with `NULL`.
+  2. **RIGHT JOIN (RIGHT OUTER JOIN)** – Returns **all records from the right table** and matching records from the left table. If no match, it fills with `NULL`.
+  3. **FULL JOIN (FULL OUTER JOIN)** – Returns **all records from both tables**, with `NULL` where there is no match.
+
+### **Example of LEFT JOIN**
+```sql
+SELECT c.customer_id, c.name, o.order_id, o.order_amount
+FROM Customers c
+LEFT JOIN Orders o
+ON c.customer_id = o.customer_id;
+```
+
+**Result:**
+| customer_id | name  | order_id | order_amount |
+|------------|--------|----------|--------------|
+| 1          | Alice  | 101      | 500          |
+| 2          | Bob    | 102      | 700          |
+| 3          | Charlie | NULL     | NULL        |
+
+- **Charlie appears, but with NULL values for order details** because he has no matching order.
+
+### **Example of FULL JOIN**
+```sql
+SELECT c.customer_id, c.name, o.order_id, o.order_amount
+FROM Customers c
+FULL JOIN Orders o
+ON c.customer_id = o.customer_id;
+```
+(If FULL JOIN is not supported, you can simulate it using `LEFT JOIN UNION RIGHT JOIN`.)
+
+---
+
+## **Key Differences**
+| Feature           | INNER JOIN | OUTER JOIN |
+|------------------|------------|------------|
+| **Matching records** | Returns only matching rows | Returns all records from one or both tables |
+| **Non-matching rows** | Excluded | Included (with NULL values) |
+| **Types** | Only one type | LEFT JOIN, RIGHT JOIN, FULL JOIN |
+| **Performance** | Faster (fewer rows) | Slower (more rows) |
+
+---
+
+### **When to Use Which?**
+✅ **Use INNER JOIN** when you only care about records that have matches in both tables.  
+✅ **Use OUTER JOIN** when you need to keep all records from one or both tables, even if there's no match.
