@@ -99,3 +99,57 @@ LEFT JOIN Conversions cv
     ON c.ad_id = cv.ad_id
 ORDER BY conversion_rate DESC;
 
+-- Q6. Define a self-join and provide a scenario for its application.
+-- Employees who are earning more than their managers. 
+    
+-- Scenario-Based Question:
+-- Q1. What is the probability that at least two of three recommended routes for drivers are the fastest, given a 70% success rate?
+    -- Need to use Binomial theorm here. 
+
+-- Guesstimate Questions:
+-- Q1. Estimate the number of Uber drivers in Delhi.
+/*
+Step 1: Estimate the Population of Delhi
+Delhi has a population of ~30 million people.
+Step 2: Estimate the Number of People Who Use Uber
+Not everyone uses Uber. Let’s assume:
+60% of people are adults (18M).
+50% of adults can afford Uber → 9M potential users.
+Assume 30% of them use Uber regularly → ~3M regular users.
+Step 3: Estimate the Number of Daily Rides
+Assume each regular user takes 10 rides per month on average.
+Monthly rides = 3M × 10 = 30M rides per month.
+Daily rides = 30M / 30 = 1M rides per day.
+Step 4: Estimate the Number of Active Uber Drivers
+A driver completes ~10 rides per day on average.
+Total drivers needed = 1M rides / 10 rides per driver = 100,000 drivers.
+Final Estimate:
+Delhi has approximately 100,000 Uber drivers.
+(This is a rough estimate and can vary based on ride demand, part-time vs full-time drivers, and surge periods.)
+*/
+-- Q2. How many Uber cabs leave Bengaluru Airport in a day?
+
+/*
+Guesstimate: Number of Uber Cabs Leaving Bengaluru Airport Daily
+We will use a top-down approach, breaking it into logical steps.
+
+Step 1: Estimate Daily Passenger Traffic at Bengaluru Airport
+Bengaluru’s Kempegowda International Airport (KIA) is one of the busiest in India.
+Assume ~300,000 passengers travel daily (both arrivals & departures).
+Step 2: Estimate Arriving Passengers
+Assuming a 50-50 split, around 150,000 passengers arrive daily.
+Step 3: Estimate the Percentage Using Uber
+Not all arriving passengers take an Uber. Let’s break it down:
+30% are picked up by family/friends → ~45,000.
+20% take other transport (buses, metro, rentals, etc.) → ~30,000.
+50% use taxis, including Uber/Ola → ~75,000 passengers.
+Step 4: Estimate the Share of Uber in Taxi Market
+Assume Uber has a 60% market share among taxis.
+Number of Uber passengers = 75,000 × 60% = 45,000.
+Step 5: Estimate Uber Occupancy Per Ride
+Assume an average of 1.5 passengers per Uber ride.
+Total Uber rides needed = 45,000 / 1.5 ≈ 30,000 Uber trips.
+Final Estimate:
+Around 30,000 Uber cabs leave Bengaluru Airport per day.
+(This can vary based on flight schedules, peak hours, and special events.)
+/*
