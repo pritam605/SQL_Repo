@@ -30,7 +30,8 @@ FROM
 WHERE TRANSACTION_DATE >= DATEADD(MONTH,12,CURRENT_DATE)
 group by 1;
 
--- Below questions are based on Paypal LinkedIn post where questions were mentioned based on prior interview experiences. 
+-- Below questions are based on Paypal LinkedIn post where questions were mentioned based on prior interview experiences.
+
 -- Q4. Write a SQL query to retrieve the final account balance for each account by calculating the net amount from deposits and withdrawals. (Paypal)
 -- Input Table:
 -- transactions table:
