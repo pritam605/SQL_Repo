@@ -66,3 +66,36 @@ Denormalization is the **process of introducing redundancy** into a **normalized
 - **To reduce expensive JOIN operations.**
 - **When performance is prioritized over storage efficiency.**
 */
+
+
+
+-- Q5. Analyze the click-through conversion rates using data from ad_clicks and cab_bookings tables.
+
+WITH Clicks AS (
+    SELECT 
+        ad_id, 
+        COUNT(DISTINCT user_id) AS total_clicks
+    FROM ad_clicks
+    GROUP BY ad_id
+),
+Conversions AS (
+    SELECT 
+        ac.ad_id,
+        COUNT(DISTINCT cb.user_id) AS total_conversions
+    FROM ad_clicks ac
+    JOIN cab_bookings cb 
+        ON ac.user_id = cb.user_id
+    WHERE cb.booking_status = 'Completed'
+    GROUP BY ac.ad_id
+)
+SELECT 
+    c.ad_id,
+    c.total_clicks,
+    COALESCE(cv.total_conversions, 0) AS total_conversions,
+    ROUND((c.total_clicks * 100.0 / (SELECT COUNT(*) FROM ad_clicks)), 2) AS click_through_rate,
+    ROUND((COALESCE(cv.total_conversions, 0) * 100.0 / NULLIF(c.total_clicks, 0)), 2) AS conversion_rate
+FROM Clicks c
+LEFT JOIN Conversions cv 
+    ON c.ad_id = cv.ad_id
+ORDER BY conversion_rate DESC;
+
